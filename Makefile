@@ -37,8 +37,6 @@ clean:
 build-docker-image: BUILDFLAGS=""
 build-docker-image: test
 	docker build \
-		--file build/docker/Dockerfile \
-		-t $(IMAGETAG) \
 		--no-cache \
 		.
 
