@@ -5,28 +5,6 @@ Simple math calculator which will make your life easier :).
 This project will spin up simple http server which can be use to  add, subtract, multiply and divide only two numbers via HTTP request.
 
 
-To add two numbers use this URL:
-```
-http(s)/{host}:{port}/add?x=1&y=2
-```
-
-To subtract two numbers use this URL:
-```
-http(s)/{host}:{port}/subtract?x=1&y=2
-```
-
-To add multiply numbers use this URL:
-
-```
-http(s)/{host}:{port}/multiply?x=1&y=2
-```
-
-To divide two numbers use this URL:
-
-```
-http(s)/{host}:{port}/divide?x=1&y=2
-```
-
 ## Getting Started
 
 
@@ -38,8 +16,35 @@ http(s)/{host}:{port}/divide?x=1&y=2
 
 | NAME | TYPE | DEFAULT |COMMENT|
 |:-----|:--------:|:--------:|:--------:| 
-| HOST   | string | 0.0.0.0 ||
-| PORT   | string | 9999|without colon|
+| HOST   | string | 0.0.0.0 |           |
+| PORT   | string | 9999    |without colon|
+
+
+## Operations
+Here is the list of endpoints you can use. To use this server you must start project.
+
+
+Add two numbers use this URL:
+```
+http/{host}:{port}/add?x=1&y=2
+```
+
+Subtract two numbers use this URL:
+```
+http/{host}:{port}/subtract?x=1&y=2
+```
+
+Multiply numbers use this URL:
+
+```
+http/{host}:{port}/multiply?x=1&y=2
+```
+
+Divide two numbers use this URL:
+
+```
+http/{host}:{port}/divide?x=1&y=2
+```
 
 ### run project
 To run project use this command:
