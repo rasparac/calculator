@@ -33,11 +33,11 @@ func New(c Config) *Server {
 func (s *Server) Run(ctx context.Context) {
 	log.Println("starting server")
 
-	m := calculator.New()
+	calc := calculator.New()
 
 	ser := http.Server{
 		Addr:        s.config.Host + ":" + s.config.Port,
-		Handler:     m,
+		Handler:     calc,
 		ReadTimeout: time.Duration(30 * time.Second),
 		IdleTimeout: time.Duration(30 * time.Second),
 	}
