@@ -1,11 +1,32 @@
 package calculator
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
+
+type MockCache struct {
+	useCache bool
+	value    float64
+}
+
+func (c *MockCache) Get(key string) (float64, bool) {
+	if c.useCache {
+		return c.value, true
+	}
+
+	return c.value, false
+}
+
+func (c *MockCache) Set(key string, v float64) {
+	c.value = v
+}
 
 func Test_generateCacheKey(t *testing.T) {
 	type args struct {
@@ -220,6 +241,119 @@ func Test_readQueryParams(t *testing.T) {
 			}
 			require.Equal(t, tt.want, got)
 			require.Equal(t, tt.want1, got1)
+		})
+	}
+}
+
+func TestCalculator_calculate(t *testing.T) {
+	type fields struct {
+		m      *http.ServeMux
+		cache  Cacher
+		routes []route
+	}
+	type args struct {
+		w         *httptest.ResponseRecorder
+		req       *http.Request
+		operation Operation
+	}
+	tests := []struct {
+		name      string
+		fields    fields
+		args      args
+		wantCode  int
+		wantErr   bool
+		want      jsonResult
+		wantedErr jsonErr
+	}{
+		{
+			name: "it should return valid response",
+			fields: fields{
+				cache: &MockCache{},
+			},
+			args: args{
+				w:         httptest.NewRecorder(),
+				req:       httptest.NewRequest(http.MethodGet, "/add?x=1&y=2", nil),
+				operation: add,
+			},
+			wantCode: http.StatusOK,
+			want: jsonResult{
+				Action: "add",
+				Answer: 3,
+				X:      1,
+				Y:      2,
+				Cached: false,
+			},
+		},
+		{
+			name: "it should return valid response with cache true",
+			fields: fields{
+				cache: &MockCache{
+					useCache: true,
+					value:    3,
+				},
+			},
+			args: args{
+				w:         httptest.NewRecorder(),
+				req:       httptest.NewRequest(http.MethodGet, "/add?x=1&y=2", nil),
+				operation: add,
+			},
+			wantCode: http.StatusOK,
+			want: jsonResult{
+				Action: "add",
+				Answer: 3,
+				X:      1,
+				Y:      2,
+				Cached: true,
+			},
+		},
+		{
+			name: "it should return an valid error response if invalid query parameter",
+			fields: fields{
+				cache: &MockCache{
+					useCache: true,
+					value:    3,
+				},
+			},
+			args: args{
+				w:         httptest.NewRecorder(),
+				req:       httptest.NewRequest(http.MethodGet, "/add?x=A&y=2", nil),
+				operation: add,
+			},
+			wantCode: http.StatusUnprocessableEntity,
+			wantErr:  true,
+			wantedErr: jsonErr{
+				Msg:     http.StatusText(http.StatusUnprocessableEntity),
+				Details: "strconv.ParseFloat: parsing \"A\": invalid syntax",
+				Code:    http.StatusUnprocessableEntity,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &Calculator{
+				m:      tt.fields.m,
+				cache:  tt.fields.cache,
+				routes: tt.fields.routes,
+			}
+			c.calculate(tt.args.w, tt.args.req, tt.args.operation)
+
+			resp := tt.args.w.Result()
+			body, err := ioutil.ReadAll(resp.Body)
+			require.NoError(t, err)
+
+			require.Equal(t, tt.wantCode, resp.StatusCode)
+
+			if tt.wantErr {
+				var gotErr jsonErr
+				err = json.Unmarshal(body, &gotErr)
+				require.NoError(t, err)
+				require.Equal(t, tt.wantedErr, gotErr)
+			}
+
+			var gotResult jsonResult
+			err = json.Unmarshal(body, &gotResult)
+			require.NoError(t, err)
+			require.Equal(t, tt.want, gotResult)
 		})
 	}
 }
