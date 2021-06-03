@@ -1,0 +1,13 @@
+version: "3.0"
+
+services:
+    calculator-app:
+        build: 
+            context: .
+            dockerfile: "Dockerfile"
+        container_name: "calculator-app"
+        environment: 
+            - HOST=0.0.0.0
+            - PORT=9999
+        ports: 
+            - "9999:9999"
