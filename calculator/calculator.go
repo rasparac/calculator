@@ -7,20 +7,21 @@ import (
 )
 
 type (
+	// Calculator holds main application logic to run math operations
 	Calculator struct {
 		m      *http.ServeMux
 		cache  Cacher
 		routes []route
 	}
 
-	route struct {
-		method, operation string
-	}
-
+	// Cacher interface is use to cache math opertaion problem resutls
 	Cacher interface {
 		Get(string) (float64, bool)
 		Set(string, float64)
 	}
+
+	// Operation holds math operation that can be use by calculator
+	Operation string
 
 	jsonResult struct {
 		Action string  `json:"action"`
@@ -36,7 +37,10 @@ type (
 		Code    int    `json:"code"`
 	}
 
-	Operation string
+	// route holds info about http method and math operation
+	route struct {
+		method, operation string
+	}
 )
 
 const (
@@ -46,6 +50,7 @@ const (
 	subtract Operation = "subtract"
 )
 
+//New returns new calculator instance
 func New() *Calculator {
 	m := http.NewServeMux()
 	r := &Calculator{
@@ -57,6 +62,7 @@ func New() *Calculator {
 	return r
 }
 
+// ServeHTTP implements Handler interface so we can use Calculator as HTTP server
 func (r *Calculator) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	setJSONHeader(w)
 
@@ -94,6 +100,7 @@ func (r *Calculator) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	r.m.ServeHTTP(w, req)
 }
 
+// initOperations initalize calculator operations
 func (r *Calculator) initOperations() {
 	r.addCalculatorOperation(http.MethodGet, string(add))
 	r.addCalculatorOperation(http.MethodGet, string(subtract))

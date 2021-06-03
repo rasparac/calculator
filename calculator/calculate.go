@@ -9,6 +9,8 @@ import (
 	"strconv"
 )
 
+// calculate will try to do provided math operation. It will read and parse provided query parameters.
+// It will return an error in case of invalid parameter or bad encode.
 func (c *Calculator) calculate(w http.ResponseWriter, req *http.Request, operation Operation) {
 	log.Printf("msg:request received operation:%s status:success \n", operation)
 
@@ -70,6 +72,9 @@ func calculateResult(x, y float64, action Operation) float64 {
 	case add:
 		return x + y
 	case divide:
+		if y == 0 {
+			return 0
+		}
 		return x / y
 	case subtract:
 		return x - y
@@ -84,6 +89,8 @@ func encode(w http.ResponseWriter, v interface{}) error {
 	return json.NewEncoder(w).Encode(v)
 }
 
+// generateCacheKey will generate cache key.
+// In case of add or multiply it will ingore X and Y order.
 func generateCacheKey(operation Operation, x, y float64) string {
 	if operation == add || operation == multiply {
 		if y > x {

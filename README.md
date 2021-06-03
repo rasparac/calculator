@@ -22,7 +22,7 @@ This project will spin up simple http server which can be use to  add, subtract,
 
 ## Operations
 Here is the list of endpoints you can use. To use this server you must start project.
-
+Calculator will store results with the same problem in cache and return the answer from cache for the same problem. Cache will expire after 1 min. 
 
 Add two numbers use this URL:
 ```
@@ -44,6 +44,17 @@ Divide two numbers use this URL:
 
 ```
 http/{host}:{port}/divide?x=1&y=2
+```
+
+Successfull response:
+```
+{
+    "action": "add|divide|multiply|subtract",
+    "answer": 0,
+    "x": 0,
+    "y": 0,
+    "cached": true
+}
 ```
 
 ### run project

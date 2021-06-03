@@ -10,21 +10,26 @@ import (
 )
 
 type (
+	// Server used to spin up HTTP server with calulator handler
 	Server struct {
 		config Config
 	}
+	// Config holds host and port info
 	Config struct {
 		Host string
 		Port string
 	}
 )
 
+// New returns new server instance
 func New(c Config) *Server {
 	return &Server{
 		config: c,
 	}
 }
 
+// Run will spin up server in go routine with provided host and port.
+// It will wait for parent context to be canceled to stop server
 func (s *Server) Run(ctx context.Context) {
 	log.Println("starting server")
 

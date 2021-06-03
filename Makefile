@@ -40,7 +40,7 @@ build-docker-image: test
 		--no-cache \
 		.
 
-docker-up:
+docker-up: test 
 	docker-compose up --force-recreate --build -d
 
 docker-down:
