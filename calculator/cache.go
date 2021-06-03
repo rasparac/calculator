@@ -21,9 +21,15 @@ func (c *Cache) Get(key string) (float64, bool) {
 	if !found {
 		return 0, found
 	}
-	return v.(float64), found
+	value, ok := v.(float64)
+	if !ok {
+		return 0, false
+	}
+	return value, found
 }
 
 func (c *Cache) Set(key string, v float64) {
-	c.cache.Add(key, v, cache.DefaultExpiration)
+	err := c.cache.Add(key, v, cache.DefaultExpiration)
+	if err != nil {
+	}
 }
