@@ -91,3 +91,17 @@ You can also build docker image with:
 ```
 make build-docker-image
 ```
+
+## Deployment
+
+
+For deployment we can use one of any CI/CD solution. Write configuration file to run sucessfull pipelines.
+Steps that we should do in pipeline:
+
+* run linter to check code
+* run tests
+* build docker images, rpm or something else which will be use to install and run application
+* build docs
+* deploy application - after successfull piplens deploy application only from master branch or what teams decide 
+
+Create nigthly builds to test application.
