@@ -80,11 +80,21 @@ make test
 ```
 
 ### docker
-If you have troubles with building and running project, you can use docker to spin up calculator server. Check `docker-compose.yml` if you want to change env vars.
+If you have troubles with building and running project, you can use docker to spin up calculator server. Check `docker-compose.yml` if you want to change env vars. `docker-up` will run tests and vet before running `docker-compose`
 
 
 ```
 make docker-up
+```
+
+If you have problem with docker-up (for example you do not have golang locally) run this:
+```
+docker-simple
+```
+
+Stop docker container by running:
+```
+docker-down
 ```
 
 You can also build docker image with:

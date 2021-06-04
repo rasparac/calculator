@@ -45,3 +45,6 @@ docker-up: test
 
 docker-down:
 	docker-compose down
+
+docker-simple: 
+	docker-compose up --force-recreate --build -d

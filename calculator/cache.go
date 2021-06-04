@@ -34,6 +34,7 @@ func (c *Cache) Get(key string) (float64, bool) {
 // Set will set value in cache by key
 func (c *Cache) Set(key string, v float64) {
 	err := c.cache.Add(key, v, cache.DefaultExpiration)
+	// ignore error for now, later check how to handle error
 	if err != nil {
 	}
 }

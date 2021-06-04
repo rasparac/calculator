@@ -97,6 +97,7 @@ func (r *Calculator) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
+	// cover other cases with default mux
 	r.m.ServeHTTP(w, req)
 }
 
